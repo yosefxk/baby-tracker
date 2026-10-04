@@ -205,9 +205,12 @@ export default function InvitePage({ params }: { params: Promise<{ code: string 
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-gray-600 mb-1">שם משתמש (באנגלית / אותיות)</label>
+                <label htmlFor="invite_username" className="block text-[11px] font-bold text-gray-600 mb-1">שם משתמש (באנגלית / אותיות)</label>
                 <input
                   type="text"
+                  id="invite_username"
+                  name="username"
+                  autoComplete="username"
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -218,9 +221,12 @@ export default function InvitePage({ params }: { params: Promise<{ code: string 
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-gray-600 mb-1">סיסמה לבחירתך</label>
+                <label htmlFor="invite_password" className="block text-[11px] font-bold text-gray-600 mb-1">סיסמה לבחירתך</label>
                 <input
                   type="password"
+                  id="invite_password"
+                  name="password"
+                  autoComplete="new-password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

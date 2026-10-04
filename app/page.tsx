@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Header } from '@/components/Header';
-import { ActiveTimers } from '@/components/ActiveTimers';
 import { QuickActionGrid } from '@/components/QuickActionGrid';
 import { DailySummary } from '@/components/DailySummary';
 import { TimelineFeed } from '@/components/TimelineFeed';
@@ -11,14 +10,14 @@ import { LogModal } from '@/components/modals/LogModal';
 import { ShareModal } from '@/components/modals/ShareModal';
 import { AddChildModal } from '@/components/modals/AddChildModal';
 import { SetupWizard } from '@/components/SetupWizard';
-import { Sparkles, Bell, Check, Baby, PlusCircle } from 'lucide-react';
+import { LoginForm } from '@/components/LoginForm';
+import { Baby, PlusCircle } from 'lucide-react';
 
 export default function DashboardPage() {
-  const { isSetupRequired, isLoading, activeBaby, babies } = useApp();
+  const { isSetupRequired, isLoading, currentUser, activeBaby, babies } = useApp();
   const [selectedLogType, setSelectedLogType] = useState<string | null>(null);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isAddChildModalOpen, setIsAddChildModalOpen] = useState(false);
-  const [givenVitaminD, setGivenVitaminD] = useState(false);
 
   // If initial setup is required (no admin user exists yet)
   if (isSetupRequired) {
@@ -31,6 +30,11 @@ export default function DashboardPage() {
         <div className="w-12 h-12 rounded-full border-4 border-pink-200 border-t-pink-500 animate-spin" />
       </div>
     );
+  }
+
+  // If not logged in, render the login form
+  if (!currentUser) {
+    return <LoginForm />;
   }
 
   return (
@@ -61,7 +65,7 @@ export default function DashboardPage() {
           </div>
         ) : (
           <>
-            {/* Welcome / Baby Status Banner */}
+            {/* Baby Status Banner */}
             <div className="bg-gradient-to-l from-pink-500 via-rose-400 to-pink-500 rounded-3xl p-5 text-white shadow-md shadow-pink-200 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2 mb-1">
@@ -71,39 +75,12 @@ export default function DashboardPage() {
                   </h2>
                 </div>
                 <p className="text-xs text-pink-100 font-medium">
-                  {activeBaby?.notes || 'תיעוד הנקה, האכלה, שינה, חיתולים וכל הרגעים החשובים'}
+                  {activeBaby?.notes || 'תיעוד האכלה, שינה, חיתולים וכל הרגעים החשובים'}
                 </p>
-              </div>
-
-              {/* Quick reminder badge */}
-              <div className="bg-white/20 backdrop-blur-md rounded-2xl p-2.5 px-3 flex items-center justify-between gap-3 text-xs border border-white/20">
-                <div className="flex items-center gap-2">
-                  <Bell className="w-4 h-4 text-pink-100" />
-                  <span>תזכורת: ויטמין D (בוקר)</span>
-                </div>
-                <button
-                  onClick={() => setGivenVitaminD(!givenVitaminD)}
-                  className={`px-3 py-1 rounded-xl font-bold text-xs transition-all cursor-pointer flex items-center gap-1 ${
-                    givenVitaminD
-                      ? 'bg-white text-pink-600'
-                      : 'bg-pink-600 hover:bg-pink-700 text-white'
-                  }`}
-                >
-                  {givenVitaminD ? (
-                    <>
-                      <Check className="w-3.5 h-3.5" /> ניתן ✅
-                    </>
-                  ) : (
-                    'סמן כניתן'
-                  )}
-                </button>
               </div>
             </div>
 
-            {/* Live Active Timers (Nursing / Sleep) */}
-            <ActiveTimers />
-
-            {/* Quick 8 Action Grid */}
+            {/* Quick Action Grid */}
             <QuickActionGrid onSelectAction={(type) => setSelectedLogType(type)} />
 
             {/* Daily Summary */}

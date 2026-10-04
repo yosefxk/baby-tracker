@@ -95,9 +95,12 @@ export function SetupWizard() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">שם משתמש (באנגלית / אותיות)</label>
+                <label htmlFor="admin_username" className="block text-xs font-bold text-gray-700 mb-1">שם משתמש (באנגלית / אותיות)</label>
                 <input
                   type="text"
+                  id="admin_username"
+                  name="username"
+                  autoComplete="username"
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -108,9 +111,12 @@ export function SetupWizard() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">סיסמה / קוד כניסה</label>
+                <label htmlFor="admin_password" className="block text-xs font-bold text-gray-700 mb-1">סיסמה / קוד כניסה</label>
                 <input
                   type="password"
+                  id="admin_password"
+                  name="password"
+                  autoComplete="new-password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

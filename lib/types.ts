@@ -46,6 +46,7 @@ export interface Invitation {
 }
 
 export type LogType =
+  | 'feeding'
   | 'nursing'
   | 'bottle'
   | 'sleep'

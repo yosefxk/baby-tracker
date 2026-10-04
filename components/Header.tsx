@@ -12,11 +12,10 @@ import {
   Share2,
   BarChart2,
   Shield,
-  HeartHandshake,
-  AlertCircle,
   PlusCircle,
   Menu,
   X,
+  LogOut,
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -26,7 +25,7 @@ interface HeaderProps {
 
 export function Header({ onOpenShareModal, onOpenAddChildModal }: HeaderProps) {
   const pathname = usePathname();
-  const { currentUser, allUsers, babies, activeBaby, setActiveBabyId, switchUser } = useApp();
+  const { currentUser, allUsers, babies, activeBaby, setActiveBabyId, switchUser, logout } = useApp();
   const [showBabyDropdown, setShowBabyDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -155,26 +154,6 @@ export function Header({ onOpenShareModal, onOpenAddChildModal }: HeaderProps) {
               <span>סטטיסטיקות</span>
             </Link>
 
-            <Link
-              href="/babysitter"
-              className={`p-1.5 px-2.5 rounded-xl text-xs font-semibold flex items-center gap-1 transition-colors ${
-                pathname === '/babysitter' ? 'bg-amber-100 text-amber-800' : 'text-gray-600 hover:bg-amber-50'
-              }`}
-            >
-              <HeartHandshake className="w-3.5 h-3.5 text-amber-500" />
-              <span>למטפלת</span>
-            </Link>
-
-            <Link
-              href="/emergency"
-              className={`p-1.5 px-2.5 rounded-xl text-xs font-semibold flex items-center gap-1 transition-colors ${
-                pathname === '/emergency' ? 'bg-red-100 text-red-700' : 'text-gray-600 hover:bg-red-50'
-              }`}
-            >
-              <AlertCircle className="w-3.5 h-3.5 text-red-500" />
-              <span>חירום</span>
-            </Link>
-
             {currentUser?.is_system_admin && (
               <Link
                 href="/admin"
@@ -192,7 +171,7 @@ export function Header({ onOpenShareModal, onOpenAddChildModal }: HeaderProps) {
           <div className="relative hidden md:block">
             <button
               onClick={() => setShowUserDropdown(!showUserDropdown)}
-              className="flex items-center gap-1 bg-gray-50 hover:bg-gray-100 border border-gray-200 px-2 py-1.5 rounded-full text-xs text-gray-700 font-medium"
+              className="flex items-center gap-1 bg-gray-50 hover:bg-gray-100 border border-gray-200 px-2 py-1.5 rounded-full text-xs text-gray-700 font-medium cursor-pointer"
             >
               <UserCheck className="w-3.5 h-3.5 text-pink-500" />
               <span className="truncate max-w-[80px]">{currentUser?.name || currentUser?.username || 'משתמש'}</span>
@@ -211,7 +190,7 @@ export function Header({ onOpenShareModal, onOpenAddChildModal }: HeaderProps) {
                       switchUser(u.id);
                       setShowUserDropdown(false);
                     }}
-                    className={`w-full flex items-center justify-between px-3 py-1.5 rounded-xl text-right text-xs transition-colors ${
+                    className={`w-full flex items-center justify-between px-3 py-1.5 rounded-xl text-right text-xs transition-colors cursor-pointer ${
                       u.id === currentUser?.id
                         ? 'bg-gray-100 font-bold text-gray-900'
                         : 'hover:bg-pink-50 text-gray-700'
@@ -221,6 +200,18 @@ export function Header({ onOpenShareModal, onOpenAddChildModal }: HeaderProps) {
                     <span className="text-[10px] text-gray-400">@{u.username}</span>
                   </button>
                 ))}
+
+                <div className="my-1 border-t border-gray-100" />
+                <button
+                  onClick={() => {
+                    setShowUserDropdown(false);
+                    logout();
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4 text-red-500" />
+                  <span>התנתקות</span>
+                </button>
               </div>
             )}
           </div>
@@ -251,24 +242,6 @@ export function Header({ onOpenShareModal, onOpenAddChildModal }: HeaderProps) {
                 >
                   <BarChart2 className="w-4 h-4 text-pink-500" />
                   <span>סטטיסטיקות ומגמות</span>
-                </Link>
-
-                <Link
-                  href="/babysitter"
-                  onClick={() => setShowMobileMenu(false)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-700 hover:bg-amber-50"
-                >
-                  <HeartHandshake className="w-4 h-4 text-amber-500" />
-                  <span>מדריך למטפלת</span>
-                </Link>
-
-                <Link
-                  href="/emergency"
-                  onClick={() => setShowMobileMenu(false)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-700 hover:bg-red-50"
-                >
-                  <AlertCircle className="w-4 h-4 text-red-500" />
-                  <span>מדריך חירום מד״א</span>
                 </Link>
 
                 {currentUser?.is_system_admin && (
@@ -313,6 +286,19 @@ export function Header({ onOpenShareModal, onOpenAddChildModal }: HeaderProps) {
                     ))}
                   </div>
                 )}
+
+                <div className="border-t border-gray-100 pt-1 mt-1">
+                  <button
+                    onClick={() => {
+                      setShowMobileMenu(false);
+                      logout();
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50 rounded-xl text-xs font-semibold transition-colors cursor-pointer text-right"
+                  >
+                    <LogOut className="w-4 h-4 text-red-500" />
+                    <span>התנתקות</span>
+                  </button>
+                </div>
               </div>
             )}
           </div>

@@ -33,7 +33,10 @@ interface AppContextType {
   createBaby: (data: Partial<Baby>) => Promise<boolean>;
   deleteBaby: (id: string) => Promise<boolean>;
   addLog: (log: { type: string; start_time?: string; end_time?: string; details: any; notes?: string }) => Promise<boolean>;
+  updateLog: (id: string, updates: Partial<LogEntry>) => Promise<boolean>;
   deleteLog: (id: string) => Promise<boolean>;
+  login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  logout: () => Promise<void>;
   // Timer controls
   startNursingTimer: (side: 'left' | 'right') => void;
   pauseNursingTimer: () => void;
@@ -259,6 +262,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const updateLog = async (id: string, updates: Partial<LogEntry>) => {
+    try {
+      const res = await fetch(`/api/logs/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates),
+      });
+      if (res.ok) {
+        const result = await res.json();
+        setLogs((prev) => prev.map((l) => (l.id === id ? result.log : l)));
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error('Error updating log:', err);
+      return false;
+    }
+  };
+
   const deleteLog = async (id: string) => {
     try {
       const res = await fetch(`/api/logs/${id}`, { method: 'DELETE' });
@@ -270,6 +292,36 @@ export function AppProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       console.error('Error deleting log:', err);
       return false;
+    }
+  };
+
+  const login = async (username: string, password: string) => {
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        return { success: false, error: data.error || 'שגיאה בהתחברות' };
+      }
+      await refreshData();
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, error: err.message || 'שגיאת רשת' };
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      setCurrentUser(null);
+      setBabies([]);
+      setLogs([]);
+      window.location.reload();
+    } catch (err) {
+      console.error('Error logging out:', err);
     }
   };
 
@@ -375,7 +427,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         createBaby,
         deleteBaby,
         addLog,
+        updateLog,
         deleteLog,
+        login,
+        logout,
         startNursingTimer,
         pauseNursingTimer,
         resetNursingTimer,
