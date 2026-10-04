@@ -14,7 +14,13 @@ services:
       - NEXT_PUBLIC_APP_URL=https://kids.baileytv.tech
     volumes:
       - baby_tracker_data:/app/data
+    networks:
+      - media_network
 
 volumes:
   baby_tracker_data:
     name: baby_tracker_data
+
+networks:
+  media_network:
+    external: true
