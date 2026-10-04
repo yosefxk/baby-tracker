@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  baby-tracker:
+    image: ghcr.io/yosefxk/baby-tracker:latest
+    container_name: baby-tracker
+    restart: unless-stopped
+    ports:
+      - "3103:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - APP_URL=https://kids.baileytv.tech
+      - NEXT_PUBLIC_APP_URL=https://kids.baileytv.tech
+    volumes:
+      - baby_tracker_data:/app/data
+
+volumes:
+  baby_tracker_data:
+    name: baby_tracker_data
