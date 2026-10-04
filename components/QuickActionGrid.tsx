@@ -43,6 +43,17 @@ export function QuickActionGrid({ onOpenCustomLog }: QuickActionGridProps) {
     }, 4000);
   };
 
+  React.useEffect(() => {
+    if (!showNoActiveSleepModal) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowNoActiveSleepModal(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showNoActiveSleepModal]);
+
   // 1. נרדמה (Fell asleep)
   const handleSleepStart = async () => {
     if (activeSleep) {
@@ -295,8 +306,18 @@ export function QuickActionGrid({ onOpenCustomLog }: QuickActionGridProps) {
 
       {/* Mini Modal if "התעוררה" was pressed when no sleep was active */}
       {showNoActiveSleepModal && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-5 max-w-sm w-full text-right shadow-2xl border border-pink-100 space-y-4 animate-in fade-in zoom-in-95">
+        <div
+          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 cursor-pointer"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowNoActiveSleepModal(false);
+            }
+          }}
+        >
+          <div
+            className="bg-white rounded-3xl p-5 max-w-sm w-full text-right shadow-2xl border border-pink-100 space-y-4 animate-in fade-in zoom-in-95 cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center gap-2 text-amber-600">
               <Clock className="w-5 h-5" />
               <h3 className="font-extrabold text-base text-gray-800">לא נרשמה התחלת שינה</h3>
