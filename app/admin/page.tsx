@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 
 export default function AdminPage() {
-  const { currentUser, switchUser } = useApp();
+  const { currentUser } = useApp();
   const [users, setUsers] = useState<any[]>([]);
   const [stats, setStats] = useState<any>({});
   const [isLoading, setIsLoading] = useState(true);

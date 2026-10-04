@@ -29,7 +29,6 @@ interface AppContextType {
   setActiveBabyId: (id: string) => void;
   refreshData: () => Promise<void>;
   createAdmin: (name: string, username: string, password: string) => Promise<{ success: boolean; error?: string }>;
-  switchUser: (userId: string) => Promise<void>;
   createBaby: (data: Partial<Baby>) => Promise<boolean>;
   deleteBaby: (id: string) => Promise<boolean>;
   addLog: (log: { type: string; start_time?: string; end_time?: string; details: any; notes?: string }) => Promise<boolean>;
@@ -182,20 +181,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const switchUser = async (userId: string) => {
-    try {
-      const res = await fetch('/api/auth/quick-switch', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId }),
-      });
-      if (res.ok) {
-        await refreshData();
-      }
-    } catch (err) {
-      console.error('Error switching user:', err);
-    }
-  };
 
   const createBaby = async (data: Partial<Baby>) => {
     try {
@@ -423,7 +408,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setActiveBabyId,
         refreshData,
         createAdmin,
-        switchUser,
         createBaby,
         deleteBaby,
         addLog,

@@ -25,7 +25,7 @@ interface HeaderProps {
 
 export function Header({ onOpenShareModal, onOpenAddChildModal }: HeaderProps) {
   const pathname = usePathname();
-  const { currentUser, allUsers, babies, activeBaby, setActiveBabyId, switchUser, logout } = useApp();
+  const { currentUser, babies, activeBaby, setActiveBabyId, logout } = useApp();
   const [showBabyDropdown, setShowBabyDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -190,29 +190,10 @@ export function Header({ onOpenShareModal, onOpenAddChildModal }: HeaderProps) {
                   className="fixed inset-0 z-40 bg-black/5"
                   onClick={() => setShowUserDropdown(false)}
                 />
-                <div className="absolute left-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 z-50 animate-in fade-in zoom-in-95">
-                  <div className="px-3 py-1.5 text-[11px] font-semibold text-gray-400">
-                    החלף משתמש:
+                <div className="absolute left-0 mt-2 w-44 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 z-50 animate-in fade-in zoom-in-95">
+                  <div className="px-3 py-1.5 text-xs font-bold text-gray-700 border-b border-gray-100 pb-1 mb-1">
+                    {currentUser?.name || currentUser?.username}
                   </div>
-                  {allUsers.map((u) => (
-                    <button
-                      key={u.id}
-                      onClick={() => {
-                        switchUser(u.id);
-                        setShowUserDropdown(false);
-                      }}
-                      className={`w-full flex items-center justify-between px-3 py-1.5 rounded-xl text-right text-xs transition-colors cursor-pointer ${
-                        u.id === currentUser?.id
-                          ? 'bg-gray-100 font-bold text-gray-900'
-                          : 'hover:bg-pink-50 text-gray-700'
-                      }`}
-                    >
-                      <span>{u.name}</span>
-                      <span className="text-[10px] text-gray-400">@{u.username}</span>
-                    </button>
-                  ))}
-
-                  <div className="my-1 border-t border-gray-100" />
                   <button
                     onClick={() => {
                       setShowUserDropdown(false);
@@ -283,26 +264,6 @@ export function Header({ onOpenShareModal, onOpenAddChildModal }: HeaderProps) {
                   <span>הוספת ילד נוסף</span>
                 </button>
 
-                {allUsers.length > 1 && (
-                  <div className="border-t border-gray-100 pt-1 mt-1">
-                    <div className="px-3 py-1 text-[10px] text-gray-400">החלף משתמש:</div>
-                    {allUsers.map((u) => (
-                      <button
-                        key={u.id}
-                        onClick={() => {
-                          switchUser(u.id);
-                          setShowMobileMenu(false);
-                        }}
-                        className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-right text-xs ${
-                          u.id === currentUser?.id ? 'bg-pink-50 font-bold text-pink-700' : 'text-gray-600 hover:bg-gray-50'
-                        }`}
-                      >
-                        <span>{u.name}</span>
-                        <span className="text-[10px] text-gray-400">@{u.username}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
 
                 <div className="border-t border-gray-100 pt-1 mt-1">
                   <button
