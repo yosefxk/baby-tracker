@@ -47,7 +47,7 @@ export function Header({ onOpenShareModal, onOpenAddChildModal }: HeaderProps) {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-pink-100 shadow-xs w-full max-w-full overflow-hidden">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-pink-100 shadow-xs w-full">
       <div className="max-w-2xl mx-auto px-3 sm:px-4 py-2 flex items-center justify-between gap-2">
         {/* Right side: Logo & Baby Switcher */}
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
@@ -79,7 +79,12 @@ export function Header({ onOpenShareModal, onOpenAddChildModal }: HeaderProps) {
               </button>
 
               {showBabyDropdown && (
-                <div className="absolute right-0 mt-2 w-60 bg-white rounded-2xl shadow-xl border border-pink-100 p-2 z-50 animate-in fade-in zoom-in-95">
+                <>
+                  <div
+                    className="fixed inset-0 z-40 bg-black/5"
+                    onClick={() => setShowBabyDropdown(false)}
+                  />
+                  <div className="absolute right-0 mt-2 w-60 bg-white rounded-2xl shadow-xl border border-pink-100 p-2 z-50 animate-in fade-in zoom-in-95">
                   <div className="px-3 py-1.5 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
                     הילדים שלי ({babies.length})
                   </div>
@@ -125,7 +130,8 @@ export function Header({ onOpenShareModal, onOpenAddChildModal }: HeaderProps) {
                     <span>הוספת ילד/ה נוספ/ת...</span>
                   </button>
                 </div>
-              )}
+              </>
+            )}
             </div>
           )}
         </div>
@@ -179,40 +185,46 @@ export function Header({ onOpenShareModal, onOpenAddChildModal }: HeaderProps) {
             </button>
 
             {showUserDropdown && (
-              <div className="absolute left-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 z-50 animate-in fade-in zoom-in-95">
-                <div className="px-3 py-1.5 text-[11px] font-semibold text-gray-400">
-                  החלף משתמש:
-                </div>
-                {allUsers.map((u) => (
-                  <button
-                    key={u.id}
-                    onClick={() => {
-                      switchUser(u.id);
-                      setShowUserDropdown(false);
-                    }}
-                    className={`w-full flex items-center justify-between px-3 py-1.5 rounded-xl text-right text-xs transition-colors cursor-pointer ${
-                      u.id === currentUser?.id
-                        ? 'bg-gray-100 font-bold text-gray-900'
-                        : 'hover:bg-pink-50 text-gray-700'
-                    }`}
-                  >
-                    <span>{u.name}</span>
-                    <span className="text-[10px] text-gray-400">@{u.username}</span>
-                  </button>
-                ))}
+              <>
+                <div
+                  className="fixed inset-0 z-40 bg-black/5"
+                  onClick={() => setShowUserDropdown(false)}
+                />
+                <div className="absolute left-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 z-50 animate-in fade-in zoom-in-95">
+                  <div className="px-3 py-1.5 text-[11px] font-semibold text-gray-400">
+                    החלף משתמש:
+                  </div>
+                  {allUsers.map((u) => (
+                    <button
+                      key={u.id}
+                      onClick={() => {
+                        switchUser(u.id);
+                        setShowUserDropdown(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-3 py-1.5 rounded-xl text-right text-xs transition-colors cursor-pointer ${
+                        u.id === currentUser?.id
+                          ? 'bg-gray-100 font-bold text-gray-900'
+                          : 'hover:bg-pink-50 text-gray-700'
+                      }`}
+                    >
+                      <span>{u.name}</span>
+                      <span className="text-[10px] text-gray-400">@{u.username}</span>
+                    </button>
+                  ))}
 
-                <div className="my-1 border-t border-gray-100" />
-                <button
-                  onClick={() => {
-                    setShowUserDropdown(false);
-                    logout();
-                  }}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
-                >
-                  <LogOut className="w-4 h-4 text-red-500" />
-                  <span>התנתקות</span>
-                </button>
-              </div>
+                  <div className="my-1 border-t border-gray-100" />
+                  <button
+                    onClick={() => {
+                      setShowUserDropdown(false);
+                      logout();
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    <LogOut className="w-4 h-4 text-red-500" />
+                    <span>התנתקות</span>
+                  </button>
+                </div>
+              </>
             )}
           </div>
 
@@ -230,7 +242,12 @@ export function Header({ onOpenShareModal, onOpenAddChildModal }: HeaderProps) {
             </button>
 
             {showMobileMenu && (
-              <div className="absolute left-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-pink-100 p-2.5 z-50 animate-in fade-in zoom-in-95 space-y-1">
+              <>
+                <div
+                  className="fixed inset-0 z-40 bg-black/20"
+                  onClick={() => setShowMobileMenu(false)}
+                />
+                <div className="absolute left-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-pink-100 p-2.5 z-50 animate-in fade-in zoom-in-95 space-y-1">
                 <div className="px-3 py-1 text-[11px] font-bold text-gray-400 border-b border-gray-100 pb-1 mb-1">
                   שלום, {currentUser?.name || currentUser?.username}
                 </div>
@@ -300,7 +317,8 @@ export function Header({ onOpenShareModal, onOpenAddChildModal }: HeaderProps) {
                   </button>
                 </div>
               </div>
-            )}
+            </>
+          )}
           </div>
         </div>
       </div>
