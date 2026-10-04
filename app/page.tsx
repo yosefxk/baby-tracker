@@ -6,7 +6,6 @@ import { Header } from '@/components/Header';
 import { QuickActionGrid } from '@/components/QuickActionGrid';
 import { DailySummary } from '@/components/DailySummary';
 import { TimelineFeed } from '@/components/TimelineFeed';
-import { LogModal } from '@/components/modals/LogModal';
 import { ShareModal } from '@/components/modals/ShareModal';
 import { AddChildModal } from '@/components/modals/AddChildModal';
 import { SetupWizard } from '@/components/SetupWizard';
@@ -15,7 +14,6 @@ import { Baby, PlusCircle } from 'lucide-react';
 
 export default function DashboardPage() {
   const { isSetupRequired, isLoading, currentUser, activeBaby, babies } = useApp();
-  const [selectedLogType, setSelectedLogType] = useState<string | null>(null);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isAddChildModalOpen, setIsAddChildModalOpen] = useState(false);
 
@@ -65,39 +63,19 @@ export default function DashboardPage() {
           </div>
         ) : (
           <>
-            {/* Baby Status Banner */}
-            <div className="bg-gradient-to-l from-pink-500 via-rose-400 to-pink-500 rounded-3xl p-5 text-white shadow-md shadow-pink-200 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xl">🌸</span>
-                  <h2 className="text-xl font-extrabold tracking-tight">
-                    היומן של {activeBaby?.name || 'הבייבי'}
-                  </h2>
-                </div>
-                <p className="text-xs text-pink-100 font-medium">
-                  {activeBaby?.notes || 'תיעוד האכלה, שינה, חיתולים וכל הרגעים החשובים'}
-                </p>
-              </div>
-            </div>
-
-            {/* Quick Action Grid */}
-            <QuickActionGrid onSelectAction={(type) => setSelectedLogType(type)} />
-
-            {/* Daily Summary */}
+            {/* 1. 3-Cell Dashboard: Sleep 24h, Total Nursing, Total Diapers */}
             <DailySummary />
 
-            {/* Activity Timeline */}
+            {/* 2. Exactly 5 Fast Action Buttons */}
+            <QuickActionGrid />
+
+            {/* 3. Activity Timeline */}
             <TimelineFeed />
           </>
         )}
       </main>
 
       {/* Modals */}
-      <LogModal
-        type={selectedLogType}
-        onClose={() => setSelectedLogType(null)}
-      />
-
       <ShareModal
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
