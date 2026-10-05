@@ -35,6 +35,17 @@ export default function AdminPage() {
   const [newUserIsAdmin, setNewUserIsAdmin] = useState(false);
   const [isSubmittingNewUser, setIsSubmittingNewUser] = useState(false);
 
+  useEffect(() => {
+    if (!showAddUser) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowAddUser(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showAddUser]);
+
   const loadAdminData = async () => {
     setIsLoading(true);
     try {
@@ -239,12 +250,8 @@ export default function AdminPage() {
                         )}
                       </div>
                       <div className="text-xs text-gray-400 mt-0.5 flex flex-wrap items-center gap-1.5">
-                        <span>סיסמה: <span className="font-mono font-bold text-gray-600">{u.password}</span></span>
                         {u.created_at && (
-                          <>
-                            <span>•</span>
-                            <span>הצטרפ/ה: {formatDate(u.created_at)}</span>
-                          </>
+                          <span>הצטרפ/ה: {formatDate(u.created_at)}</span>
                         )}
                       </div>
                     </div>
@@ -254,12 +261,12 @@ export default function AdminPage() {
                       <button
                         onClick={() => {
                           setEditingUserId(isEditing ? null : u.id);
-                          setNewPassword(u.password);
+                          setNewPassword('');
                         }}
                         className="px-2.5 py-1.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl text-xs font-semibold text-gray-700 flex items-center gap-1 transition-colors cursor-pointer"
                       >
                         <Key className="w-3.5 h-3.5 text-amber-500" />
-                        <span>שינוי סיסמה</span>
+                        <span>איפוס סיסמה</span>
                       </button>
 
                       <button
@@ -285,23 +292,44 @@ export default function AdminPage() {
                     </div>
                   </div>
 
-                  {/* Inline Password edit form */}
+                  {/* Inline Password reset form */}
                   {isEditing && (
-                    <div className="bg-amber-50/70 p-3 rounded-2xl border border-amber-200 flex items-center gap-3">
-                      <span className="text-xs font-bold text-amber-900">סיסמה חדשה:</span>
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        if (!newPassword.trim()) return;
+                        handleUpdateUser(u.id, { password: newPassword.trim() });
+                      }}
+                      className="bg-amber-50/70 p-3 rounded-2xl border border-amber-200 flex flex-wrap items-center gap-2.5 animate-in fade-in"
+                    >
+                      <span className="text-xs font-bold text-amber-900 shrink-0">סיסמה חדשה עבור {u.name}:</span>
                       <input
-                        type="text"
+                        type="password"
+                        required
+                        autoComplete="new-password"
+                        placeholder="הזן סיסמה חדשה..."
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                        className="w-32 px-2 py-1 bg-white border border-amber-300 rounded-lg text-center font-mono text-sm font-bold"
+                        className="flex-1 min-w-[140px] px-3 py-1.5 bg-white border border-amber-300 rounded-xl text-xs font-semibold"
                       />
                       <button
-                        onClick={() => handleUpdateUser(u.id, { password: newPassword })}
-                        className="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
+                        type="submit"
+                        disabled={!newPassword.trim()}
+                        className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors shrink-0 shadow-xs"
                       >
                         <Check className="w-3.5 h-3.5" /> שמור סיסמה
                       </button>
-                    </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingUserId(null);
+                          setNewPassword('');
+                        }}
+                        className="px-2.5 py-1.5 text-xs text-gray-500 hover:bg-gray-100 rounded-xl cursor-pointer shrink-0"
+                      >
+                        ביטול
+                      </button>
+                    </form>
                   )}
 
                   {/* Accessible babies list */}
@@ -330,8 +358,18 @@ export default function AdminPage() {
 
       {/* Add User Modal */}
       {showAddUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-purple-100">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-in fade-in cursor-pointer"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowAddUser(false);
+            }
+          }}
+        >
+          <div
+            className="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-purple-100 cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
               <div className="flex items-center gap-2">
                 <div className="w-9 h-9 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center">

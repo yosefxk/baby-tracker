@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { readDb, writeDb } from '@/lib/db';
 import { User } from '@/lib/types';
-import { SESSION_COOKIE_NAME } from '@/lib/auth';
+import { SESSION_COOKIE_NAME, hashPassword } from '@/lib/auth';
 
 export async function GET() {
   const db = readDb();
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
       id: `user_admin_${Date.now()}`,
       username: username.trim().toLowerCase(),
       name: name.trim(),
-      password: password.trim(),
+      password: hashPassword(password.trim()),
       is_system_admin: true,
       created_at: new Date().toISOString(),
     };

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getCurrentUser, SESSION_COOKIE_NAME } from '@/lib/auth';
+import { getCurrentUser, SESSION_COOKIE_NAME, verifyPassword, hashPassword } from '@/lib/auth';
 import { readDb, writeDb } from '@/lib/db';
 import { BabyPermission, User } from '@/lib/types';
 
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
       let existingUser = db.users.find((u) => u.username === cleanUsername);
 
       if (existingUser) {
-        if (existingUser.password !== password.trim()) {
+        if (!verifyPassword(password.trim(), existingUser.password)) {
           return NextResponse.json({ error: 'שם משתמש זה כבר קיים עם סיסמה אחרת' }, { status: 400 });
         }
         user = existingUser;
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
           id: `user_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
           username: cleanUsername,
           name: name.trim(),
-          password: password.trim(),
+          password: hashPassword(password.trim()),
           is_system_admin: false,
           created_at: new Date().toISOString(),
         };

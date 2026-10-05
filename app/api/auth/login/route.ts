@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { readDb } from '@/lib/db';
-import { SESSION_COOKIE_NAME } from '@/lib/auth';
+import { readDb, writeDb } from '@/lib/db';
+import { SESSION_COOKIE_NAME, verifyPassword, hashPassword } from '@/lib/auth';
 
 export async function POST(req: Request) {
   try {
@@ -10,14 +10,23 @@ export async function POST(req: Request) {
     }
 
     const db = readDb();
+    const cleanUsername = username.toLowerCase().trim();
+    const cleanPassword = password.trim();
+
     const user = db.users.find(
       (u) =>
-        u.username.toLowerCase() === username.toLowerCase().trim() &&
-        u.password === password.trim()
+        u.username.toLowerCase() === cleanUsername &&
+        verifyPassword(cleanPassword, u.password)
     );
 
     if (!user) {
       return NextResponse.json({ error: 'שם משתמש או סיסמה שגויים' }, { status: 401 });
+    }
+
+    // If password was stored in plaintext, upgrade it to hash on login
+    if (!user.password.startsWith('pbkdf2$')) {
+      user.password = hashPassword(cleanPassword);
+      writeDb(db);
     }
 
     const response = NextResponse.json({

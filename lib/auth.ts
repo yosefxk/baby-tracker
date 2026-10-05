@@ -1,8 +1,28 @@
 import { cookies } from 'next/headers';
+import crypto from 'crypto';
 import { readDb } from './db';
 import { User, Role } from './types';
 
 export const SESSION_COOKIE_NAME = 'baby_session_user_id';
+
+export function hashPassword(password: string): string {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
+  return `pbkdf2$${salt}$${hash}`;
+}
+
+export function verifyPassword(password: string, stored?: string): boolean {
+  if (!stored) return false;
+  if (!stored.startsWith('pbkdf2$')) {
+    // Legacy plaintext backwards compatibility
+    return stored === password;
+  }
+  const parts = stored.split('$');
+  if (parts.length !== 3) return false;
+  const [, salt, hash] = parts;
+  const verifyHash = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
+  return hash === verifyHash;
+}
 
 export async function getCurrentUser(): Promise<User | null> {
   const cookieStore = await cookies();

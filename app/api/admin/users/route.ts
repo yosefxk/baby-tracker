@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getCurrentUser } from '@/lib/auth';
+import { getCurrentUser, hashPassword } from '@/lib/auth';
 import { readDb, writeDb } from '@/lib/db';
 import { User } from '@/lib/types';
 
@@ -26,7 +26,6 @@ export async function GET() {
       id: u.id,
       name: u.name,
       username: u.username,
-      password: u.password,
       is_system_admin: u.is_system_admin,
       created_at: u.created_at,
       ownedBabies: ownedBabies.map((b) => ({ id: b.id, name: b.name })),
@@ -66,13 +65,14 @@ export async function POST(req: Request) {
         id: `user_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
         username: cleanUsername,
         name: name.trim(),
-        password: password.trim(),
+        password: hashPassword(password.trim()),
         is_system_admin: !!is_system_admin,
         created_at: new Date().toISOString(),
       };
       db.users.push(newUser);
       writeDb(db);
-      return NextResponse.json({ success: true, user: newUser });
+      const { password: _, ...safeUser } = newUser;
+      return NextResponse.json({ success: true, user: safeUser });
     }
 
     if (action === 'delete') {
@@ -91,7 +91,9 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'משתמש לא נמצא' }, { status: 404 });
       }
 
-      if (password) db.users[userIndex].password = password.trim();
+      if (password && password.trim()) {
+        db.users[userIndex].password = hashPassword(password.trim());
+      }
       if (name) db.users[userIndex].name = name.trim();
       if (username) db.users[userIndex].username = username.trim().toLowerCase();
       if (typeof is_system_admin === 'boolean') {
@@ -99,7 +101,8 @@ export async function POST(req: Request) {
       }
 
       writeDb(db);
-      return NextResponse.json({ success: true, user: db.users[userIndex] });
+      const { password: _, ...safeUpdatedUser } = db.users[userIndex];
+      return NextResponse.json({ success: true, user: safeUpdatedUser });
     }
 
     if (action === 'set_permission') {
