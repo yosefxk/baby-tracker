@@ -2,8 +2,6 @@
 
 A modern, responsive, privacy-focused online web application for parents and caregivers to track diaper changes, feedings, sleep routines, growth milestones, and health events. Built for multi-child households with granular co-parenting permissions, live stopwatches, and zero email dependencies.
 
-Live at: **[kids.baileytv.tech](https://kids.baileytv.tech)**
-
 ---
 
 ## ✨ Features
@@ -62,8 +60,8 @@ services:
     environment:
       - PORT=3000
       - NODE_ENV=production
-      - APP_URL=https://kids.baileytv.tech
-      - NEXT_PUBLIC_APP_URL=https://kids.baileytv.tech
+      - APP_URL=https://your-domain.example.com
+      - NEXT_PUBLIC_APP_URL=https://your-domain.example.com
     volumes:
       - baby_tracker_data:/app/data
 
